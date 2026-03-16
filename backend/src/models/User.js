@@ -19,8 +19,9 @@ const userSchema = new mongoose.Schema({
     profileImage: {
         type: String,
         default: ""
-    }
-});
+    },
+    
+},{timestamps: true});
 
 // Hash the password before saving the user
 // Removed 'next' as it's not needed for async functions
