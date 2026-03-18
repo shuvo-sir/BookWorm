@@ -1,4 +1,5 @@
 // FOREST
+/*
 const COLORS = {
   primary: "#4CAF50",
   textPrimary: "#2e5a2e",
@@ -12,9 +13,9 @@ const COLORS = {
   white: "#ffffff",
   black: "#000000",
 };
-
+*/
 // RETRO
-/*
+
 const COLORS = {
   primary: "#e17055",
   textPrimary: "#784e2d",
@@ -28,7 +29,7 @@ const COLORS = {
   white: "#ffffff",
   black: "#000000",
 };
-*/
+
 
 // OCEAN
 /*

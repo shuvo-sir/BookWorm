@@ -6,22 +6,18 @@ const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: COLORS.background,
+    flexGrow : 1,
     padding: 20,
     justifyContent: "center",
-  },
-  scrollViewStyle: {
-    flex: 1,
     backgroundColor: COLORS.background,
-  },
-  topIllustration: {
-    alignItems: "center",
-    width: "100%",
   },
   illustrationImage: {
     width: width * 0.75,
     height: width * 0.75,
+  },
+  TopIllustration: {
+    alignItems: "center",
+    width: "100%",
   },
   card: {
     backgroundColor: COLORS.cardBackground,
@@ -34,22 +30,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderWidth: 2,
     borderColor: COLORS.border,
-    marginTop: -24,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: COLORS.textPrimary,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-    textAlign: "center",
+    marginTop: -24
   },
   formContainer: {
     marginBottom: 16,
@@ -59,8 +40,8 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    marginBottom: 8,
     color: COLORS.textPrimary,
+    marginBottom: 8,
     fontWeight: "500",
   },
   inputContainer: {
@@ -72,48 +53,15 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     paddingHorizontal: 12,
   },
-  inputIcon: {
-    marginRight: 10,
-  },
   input: {
     flex: 1,
     height: 48,
     color: COLORS.textDark,
   },
-  eyeIcon: {
-    padding: 8,
+  inputIcon: {
+    marginRight: 8,
   },
-  button: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 12,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 16,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  buttonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 24,
-  },
-  footerText: {
-    color: COLORS.textSecondary,
-    marginRight: 5,
-  },
-  link: {
-    color: COLORS.primary,
-    fontWeight: "600",
-  },
+  
 });
 
 export default styles;
