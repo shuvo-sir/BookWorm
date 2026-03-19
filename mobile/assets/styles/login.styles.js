@@ -1,5 +1,5 @@
 // styles/login.styles.js
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Button } from "react-native";
 import COLORS from "../../constants/colors";
 
 const { width } = Dimensions.get("window");
@@ -61,7 +61,40 @@ const styles = StyleSheet.create({
   inputIcon: {
     marginRight: 8,
   },
-  
+  button: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 48,
+    marginTop: 16,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  buttonText: {
+    color: COLORS.white,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  eyeIcon: {
+    padding: 8,
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 24,
+  },
+  footerText: {
+    color: COLORS.textPrimary,
+    marginRight: 5,
+  },
+  link: {
+    color: COLORS.primary,
+    fontWeight: "600"
+  }
 });
 
 export default styles;

@@ -1,8 +1,12 @@
-import { View, Text, Image, TextInput } from 'react-native'
+import { View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import styles from "../../assets/styles/login.styles"
 import { useState } from 'react'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import COLORS from '../../constants/colors'
+import { Link } from "expo-router";
+import { Platform } from 'react-native'
+
+
 
 const Login = () => {
 
@@ -15,6 +19,10 @@ const Login = () => {
 
 
   return (
+    <KeyboardAvoidingView
+      style = {{ flex: 1,}}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
     <View style = {styles.container}>
       {/* illustration */}
       <View style = {styles.TopIllustration}>
@@ -42,9 +50,60 @@ const Login = () => {
               />
             </View>
           </View>
+
+          {/* Password */}
+          <View style = {styles.inputGroup}>
+            <Text style = {styles.label}>Password</Text>
+            <View style = {styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color={COLORS.primary} style={styles.inputIcon} />
+              <TextInput
+                style = {styles.input}
+                placeholder="Enter your password"
+                placeholderTextColor={COLORS.placeholderText}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color={COLORS.primary}
+                  style={styles.eyeIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          {/* Login Button */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Login</Text>
+            )}
+          </TouchableOpacity>
+
+          {/* Footer */}
+          <View style = {styles.footer}>
+            <Text style = {styles.footerText}>Don't have an account?</Text>
+            <Link href={"/signup"} asChild>
+              <TouchableOpacity>
+                <Text style={styles.link}>Sign Up</Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
         </View>
       </View>
     </View>
+    </KeyboardAvoidingView>
   )
 }
 
