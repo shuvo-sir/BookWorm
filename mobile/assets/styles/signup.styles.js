@@ -1,7 +1,8 @@
 // styles/signup.styles.js
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
-import { Label } from "@react-navigation/elements";
+import { Button, Label } from "@react-navigation/elements";
+import { linkTo } from "expo-router/build/global-state/routing";
 
 const styles = StyleSheet.create({
   // container: {
@@ -147,9 +148,50 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 12,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.border,
     borderRadius: 16,
-    
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    height: 48,
+    color: COLORS.textDark,
+  },
+  eyeIcon: {
+    padding: 8,
+  },
+  button: {
+    backgroundColor: COLORS.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 48,
+    marginTop: 16,
+    shadowColor: COLORS.black,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    borderRadius: 12,
+    elevation: 2,
+  },
+  buttonText: {
+    color: COLORS.white,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 24,
+  },
+  footerText: {
+    color: COLORS.textPrimary,
+    marginRight: 5,
+  },
+  link: {
+    color: COLORS.primary,
+    fontWeight: "600",
   }
 });
 

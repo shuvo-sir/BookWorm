@@ -1,8 +1,9 @@
-import { View, Text, KeyboardAvoidingView, Platform, TextInput} from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, TextInput,TouchableOpacity, ActivityIndicator} from 'react-native'
 import styles from '../../assets/styles/signup.styles'
 import { useState } from 'react';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import COLORS from '../../constants/colors';
+import { Link, router } from 'expo-router';
 
 const signup = () => {
 
@@ -29,21 +30,87 @@ const signup = () => {
             <View style = {styles.formContainer}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Username</Text>
+              
+                <View style = {styles.inputContainer}>
+                  <Ionicons style={styles.inputIcon}
+                  name='person-outline'
+                  size={20}
+                  color={COLORS.primary}/>
+                  <TextInput
+                    style={styles.input}
+                    placeholder='Shuvo Halder'
+                    placeholderTextColor={COLORS.placeholderText}
+                    value={username}
+                    onChangeText={setUsername}
+                    autoCapitalize='none'
+                  />
+                </View>
               </View>
-              <View style = {styles.inputContainer}>
-                <Ionicons style={styles.inputIcons}
-                name='person-outline'
-                size={20}
-                color={COLORS.primary}/>
-                <TextInput
-                  style={styles.input}
-                  placeholder='Shuvo Halder'
-                  placeholderTextColor={COLORS.placeholderText}
-                  value={username}
-                  onChangeText={setUsername}
-                  autoCapitalize='none'
+
+              {/* Email */}
+          <View style = {styles.inputGroup}>
+            <Text style = {styles.label}>Email</Text>
+            <View style = {styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color={COLORS.primary} style={styles.inputIcon} />
+              <TextInput
+                style = {styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor={COLORS.placeholderText}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+          </View>
+
+          {/* Password */}
+          <View style = {styles.inputGroup}>
+            <Text style = {styles.label}>Password</Text>
+            <View style = {styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color={COLORS.primary} style={styles.inputIcon} />
+              <TextInput
+                style = {styles.input}
+                placeholder="Enter your password"
+                placeholderTextColor={COLORS.placeholderText}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color={COLORS.primary}
+                  style={styles.eyeIcon}
                 />
-              </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+            </View>
+
+            {/* SignUp Button */}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size={"small"} color={COLORS.primary}/>
+              ) : (
+                <Text style={styles.buttonText}>Sign Up</Text>
+              )}
+            </TouchableOpacity>
+            {/* Footer */}
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>All ready have an account</Text>
+                <TouchableOpacity onPress={() => router.back()}>
+                  <Text style={styles.link}>Sign-In</Text>
+                </TouchableOpacity>
             </View>
           </View>
         </View>
