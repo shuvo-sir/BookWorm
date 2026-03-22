@@ -1,19 +1,23 @@
-import { jwt } from "jsonwebtoken";
-import User from "../models/User";
+import jwt from "jsonwebtoken"; // Fix 1: Default import
+import User from "../models/User.js";
 
-const protectRoute = async (req, res, next) => {
+export const protectRoute = async (req, res, next) => {
     try {
-        // get token from header
-        const token = req.headers("Authorization").replace("Bearer ", "");
-        if (!token) {
-        return res.status(401).json({ message: "No token, authorization denied" });
+        // Fix 2 & 3: Get header safely
+        const authHeader = req.header("Authorization");
+        
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ message: "No token, authorization denied" });
         }
 
-        // verify token
+        const token = authHeader.replace("Bearer ", "");
+
+        // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // find user
-        const user = await User.findById(decoded.id).select("-password");
+        // Find user (Make sure your JWT payload uses 'id' or '_id')
+        const user = await User.findById(decoded.id || decoded._id).select("-password");
+        
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -21,9 +25,9 @@ const protectRoute = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log(error, "Error in protectRoute");
-        res.status(500).json({ message: "Error in protectRoute" });
+        console.log("Error in protectRoute:", error.message);
+        res.status(401).json({ message: "Token is not valid" });
     }
-}
+};
 
 export default protectRoute;

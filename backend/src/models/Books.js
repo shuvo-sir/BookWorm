@@ -11,7 +11,7 @@ const bookSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        require: true
+        required: true // Fixed spelling from "require" to "required"
     },
     rating: {
         type: Number,
@@ -21,10 +21,10 @@ const bookSchema = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: user,
+        ref: "User", // Fixed: Added quotes and matched model name "User"
         required: true
     }
-},{timestamps: true});
+}, { timestamps: true });
 
 const Book = mongoose.model("Book", bookSchema);
 export default Book;

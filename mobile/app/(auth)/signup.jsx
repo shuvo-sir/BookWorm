@@ -26,7 +26,6 @@ const signup = () => {
               <Text style={styles.subtitle}>Share your favorite read</Text>
             </View>
 
-
             <View style = {styles.formContainer}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Username</Text>
@@ -100,7 +99,7 @@ const signup = () => {
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator size={"small"} color={COLORS.primary}/>
+                <ActivityIndicator size={"small"} color={COLORS.white}/>
               ) : (
                 <Text style={styles.buttonText}>Sign Up</Text>
               )}
