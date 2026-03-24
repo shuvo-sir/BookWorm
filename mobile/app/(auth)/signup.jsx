@@ -1,9 +1,10 @@
-import { View, Text, KeyboardAvoidingView, Platform, TextInput,TouchableOpacity, ActivityIndicator} from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, TextInput,TouchableOpacity, ActivityIndicator, Alert} from 'react-native'
 import styles from '../../assets/styles/signup.styles'
 import { useState } from 'react';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import COLORS from '../../constants/colors';
 import { Link, router } from 'expo-router';
+import { useAuthStore } from '../../store/authStore';
 
 const signup = () => {
 
@@ -11,9 +12,33 @@ const signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {};
+
+  const {user, isLoading, token, register} = useAuthStore();
+  // const handleSignUp = async() => {
+  //   const result = await register(username,email,password);
+  //   if(!result) Alert.alert("Error", result.error);
+  // };
+
+
+  const handleSignUp = async () => {
+  // 1. Call the register function
+  const result = await register(username, email, password);
+
+  // 2. Check the "success" flag we just added to the store
+  if (result.success) {
+    // If it works, maybe navigate to home
+    router.replace("/index"); 
+  } else {
+    // 🚀 This will now show your backend's "All fields are required" message!
+    Alert.alert("Registration Failed", result.error);
+  }
+};
+  console.log(user);
+  console.log(token);     
+
+
+
   return (
      <KeyboardAvoidingView
           style = {{ flex: 1,}}
@@ -96,9 +121,9 @@ const signup = () => {
             <TouchableOpacity
               style={styles.button}
               onPress={handleSignUp}
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? (
+              {isLoading ? (
                 <ActivityIndicator size={"small"} color={COLORS.white}/>
               ) : (
                 <Text style={styles.buttonText}>Sign Up</Text>
