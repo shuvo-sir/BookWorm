@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    isVerified: { type: Boolean, default: false }, // User can't login until this is true
+    otp: String,           // The 6-digit code
+    otpExpires: Date,      // Expiration time (e.g., 10 mins)
     
 },{timestamps: true});
 
