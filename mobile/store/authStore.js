@@ -55,8 +55,7 @@ export const useAuthStore = create((set) => ({
     try {
         // Create a controller to manually stop the request if it takes too long
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second limit
-
+const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 seconds
         const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
