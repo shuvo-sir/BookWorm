@@ -161,13 +161,13 @@ router.post('/register', async (req, res) => {
             serverOtp: otp 
         });
 
-    } catch (error) {
-        // CHECK YOUR TERMINAL FOR THIS LOG:
-        console.error("CRITICAL MAIL ERROR:", error);
+   } catch (error) {
+        console.error("FULL ERROR LOG:", error);
         
+        // This will show the REAL reason on your phone Alert
         res.status(500).json({ 
             message: 'Failed to send email.',
-            error: error.message // This helps you see the real error on the frontend
+            debug: error.message 
         });
     }
 });
