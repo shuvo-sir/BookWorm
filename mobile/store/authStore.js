@@ -50,30 +50,40 @@ export const useAuthStore = create((set) => ({
 
     register: async (username, email, password) => {
     set({ isLoading: true });
-    console.log("🚀 Request Started..."); // Check your debugger/console
+    console.log("🚀 Request Started to Render...");
+    
     try {
+        // Create a controller to manually stop the request if it takes too long
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second limit
+
         const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
-            // Optional: add a timeout to the fetch itself
-            signal: AbortSignal.timeout(15000) 
+            signal: controller.signal
         });
 
-        const data = await response.json();
-        console.log("✅ Server Responded:", data);
+        clearTimeout(timeoutId); // Cancel the timeout if the request finishes
 
-        if (!response.ok) throw new Error(data.message || "Server Error");
+        const data = await response.json();
+        console.log("✅ Server Responded with:", data);
+
+        if (!response.ok) throw new Error(data.message || "Registration failed");
 
         set({ isLoading: false });
         return { success: true, serverOtp: data.serverOtp }; 
+        
     } catch (error) {
-        console.log("❌ Error Caught:", error.message);
         set({ isLoading: false });
+        if (error.name === 'AbortError') {
+            console.log("❌ Error: Server took too long to wake up.");
+            return { success: false, error: "Server is waking up. Please try again in 10 seconds." };
+        }
+        console.log("❌ Connection Error:", error.message);
         return { success: false, error: error.message };
     }
 },
-
     verifyOTP: async (username, email, password, userCode, serverOtp) => {
         set({ isLoading: true });
         try {

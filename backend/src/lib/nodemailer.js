@@ -4,18 +4,20 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const transporter = nodemailer.createTransport({
-  service: "gmail",
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,   // 10 seconds
+  port: 465, // Changed from 587 to 465
+  secure: true, // Use SSL for port 465
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS.replace(/\s/g, ""), 
+    // Ensure this has NO spaces: "daxvoxtyzzncknah"
+    pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, "") : "",
   },
+  // ADD THESE TIMEOUTS SO RENDER DOESN'T GIVE UP
+  connectionTimeout: 20000, // 20 seconds
+  greetingTimeout: 20000,
+  socketTimeout: 20000,
   tls: {
-    rejectUnauthorized: false // Helps bypass network blocks
+    rejectUnauthorized: false // This bypasses some network security blocks
   }
 });
 
