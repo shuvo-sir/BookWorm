@@ -119,80 +119,71 @@ const generateToken = (userId) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
 }
 
-// --- 1. REGISTER ROUTE ---
+// --- 1. REGISTER ROUTE (NO DATABASE SAVE HERE) ---
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        // Validation
         if (!username || !email || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
-        if (password.length < 6) {
-            return res.status(400).json({ message: 'Password must be at least 6 characters' });
+
+        // Check if a VERIFIED user already exists
+        const verifiedUser = await User.findOne({ email, isVerified: true });
+        if (verifiedUser) {
+            return res.status(400).json({ message: 'Email already registered' });
         }
 
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Username or Email already exists' });
-        }
-
-        // Generate 6-digit OTP
+        // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-        const profileImage = `https://api.dicebear.com/9.x/initials/svg?seed=${username}`;
-
-        const user = new User({
-            username,
-            email,
-            password, // Make sure your User model hashes this in a pre-save hook!
-            profileImage,
-            otp,
-            otpExpires,
-            isVerified: false // Important: user is locked until verified
-        });
-
-        await user.save();
-
-        // Send Email
+        // Send Email FIRST. If this fails, the catch block triggers 
+        // and NOTHING is saved to the database.
         await transporter.sendMail({
             from: `"BookWorm 🐛" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: "Verify your BookWorm Account",
-            html: `<h1>Your code is: ${otp}</h1><p>It expires in 10 minutes.</p>`
+            html: `<h1>Your code is: ${otp}</h1>`
         });
 
-        res.status(200).json({ message: 'OTP sent to your email. Please verify.' });
+        // We send the OTP back to the Frontend. 
+        // The frontend will "hold" this code in memory.
+        res.status(200).json({ 
+            message: 'OTP sent!', 
+            serverOtp: otp 
+        });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to send email. Try again.' });
     }
 });
 
-// --- 2. VERIFY OTP ROUTE ---
+// --- 2. VERIFY OTP ROUTE (DATABASE SAVE HAPPENS HERE) ---
 router.post('/verify-otp', async (req, res) => {
     try {
-        const { email, code } = req.body;
+        const { username, email, password, userCode, serverOtp } = req.body;
 
-        const user = await User.findOne({ 
-            email, 
-            otp: code, 
-            otpExpires: { $gt: Date.now() } 
-        });
-
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid or expired code' });
+        // Compare the code the user typed vs what we sent them
+        if (userCode !== serverOtp) {
+            return res.status(400).json({ message: 'Invalid verification code' });
         }
 
-        user.isVerified = true;
-        user.otp = undefined;
-        user.otpExpires = undefined;
+        // ONLY NOW do we create the user
+        const profileImage = `https://api.dicebear.com/9.x/initials/svg?seed=${username}`;
+        
+        const user = new User({
+            username,
+            email,
+            password, 
+            profileImage,
+            isVerified: true 
+        });
+
         await user.save();
 
         const token = generateToken(user._id);
-        res.status(200).json({
+        res.status(201).json({
             token,
             user: {
                 id: user._id,
@@ -202,10 +193,9 @@ router.post('/verify-otp', async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Verification failed' });
+        res.status(500).json({ message: 'Could not create account' });
     }
 });
-
 // --- 3. RESEND OTP ROUTE ---
 router.post('/resend-otp', async (req, res) => {
     try {

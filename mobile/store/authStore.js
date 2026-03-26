@@ -48,7 +48,6 @@ export const useAuthStore = create((set) => ({
     token: null,
     isLoading: false,
 
-    // 1. Initial Registration (Triggers the Email OTP)
     register: async (username, email, password) => {
         set({ isLoading: true });
         try {
@@ -59,30 +58,29 @@ export const useAuthStore = create((set) => ({
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Registration failed");
+            if (!response.ok) throw new Error(data.message);
 
             set({ isLoading: false });
-            return { success: true }; 
+            // Return the OTP to the component so it can be verified later
+            return { success: true, serverOtp: data.serverOtp }; 
         } catch (error) {
             set({ isLoading: false });
             return { success: false, error: error.message };
         }
     },
 
-    // 2. Final Verification (Checks the code and logs the user in)
-    verifyOTP: async (email, code) => {
+    verifyOTP: async (username, email, password, userCode, serverOtp) => {
         set({ isLoading: true });
         try {
             const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/verify-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, code })
+                body: JSON.stringify({ username, email, password, userCode, serverOtp })
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Invalid code");
+            if (!response.ok) throw new Error(data.message);
 
-            // Save data for persistence
             await AsyncStorage.setItem("user", JSON.stringify(data.user));
             await AsyncStorage.setItem("token", data.token);
 
@@ -93,6 +91,7 @@ export const useAuthStore = create((set) => ({
             return { success: false, error: error.message };
         }
     },
+
 
     // 3. Resend OTP (In case they didn't get the email)
     resendOTP: async (email) => {

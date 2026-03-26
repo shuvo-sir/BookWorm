@@ -164,36 +164,29 @@ const signup = () => {
 
   const { isLoading, register, verifyOTP, resendOTP } = useAuthStore();
 
-  // --- 1. Handle Initial Signup ---
-  const handleSignUp = async () => {
-    if (!username || !email || !password) {
-      return Alert.alert("Error", "All fields are required");
-    }
+  const [storedServerOtp, setStoredServerOtp] = useState("");
 
+  
+
+const handleSignUp = async () => {
     const result = await register(username, email, password);
-
     if (result.success) {
-      setIsPendingVerification(true); // Switch to OTP view
-      Alert.alert("Check Email", "We sent a 6-digit code to your email.");
+        setStoredServerOtp(result.serverOtp); // Store the code from the server response
+        setIsPendingVerification(true);
     } else {
-      Alert.alert("Registration Failed", result.error);
+        Alert.alert("Error", result.error);
     }
-  };
+};
 
-  // --- 2. Handle OTP Verification ---
-  const handleVerifyOTP = async () => {
-    if (otpCode.length < 6) {
-      return Alert.alert("Error", "Please enter the 6-digit code");
-    }
-
-    const result = await verifyOTP(email, otpCode);
-
+const handleVerifyOTP = async () => {
+    // Send all data back to verify and finally SAVE to DB
+    const result = await verifyOTP(username, email, password, otpCode, storedServerOtp);
     if (result.success) {
-      router.replace("/index"); // Now finally go to Home
+        router.replace("/index"); 
     } else {
-      Alert.alert("Verification Failed", result.error);
+        Alert.alert("Error", result.error);
     }
-  };
+};
 
   return (
     <KeyboardAvoidingView
