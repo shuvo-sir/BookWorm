@@ -7,18 +7,23 @@ export const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
   port: 465,
-  secure: true,
+  secure: true, // Use SSL
   auth: {
     user: process.env.EMAIL_USER,
-    // This .replace(/\s/g, "") removes all spaces automatically
-    pass: process.env.EMAIL_PASS.replace(/\s/g, ""), 
+    // Automatically removes spaces from your 'daxv oxty zznc knah'
+    pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, "") : "",
   },
+  tls: {
+    // This allows the connection even if your network has strict security
+    rejectUnauthorized: false 
+  }
 });
-// This small block checks if the connection is working
+
+// TEST THE CONNECTION IMMEDIATELY
 transporter.verify((error, success) => {
   if (error) {
-    console.log("❌ Mail Server Error:", error);
+    console.log("❌ NODEMAILER ERROR:", error.message);
   } else {
-    console.log("✅ Mail Server is ready to send messages");
+    console.log("✅ NODEMAILER IS LIVE");
   }
 });

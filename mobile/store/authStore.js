@@ -64,9 +64,12 @@ export const useAuthStore = create((set) => ({
             // Return the OTP to the component so it can be verified later
             return { success: true, serverOtp: data.serverOtp }; 
         } catch (error) {
-            set({ isLoading: false });
-            return { success: false, error: error.message };
-        }
+    set({ isLoading: false });
+    // This alert will tell you if it's "Failed to fetch" (Network) 
+    // or a real message from your backend
+    console.log("Full Error Object:", error);
+    return { success: false, error: error.message || "Network Error" };
+}
     },
 
     verifyOTP: async (username, email, password, userCode, serverOtp) => {
