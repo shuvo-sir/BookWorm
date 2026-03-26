@@ -119,43 +119,56 @@ const generateToken = (userId) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
 }
 
-// --- 1. REGISTER ROUTE (NO DATABASE SAVE HERE) ---
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
+        // Validation
         if (!username || !email || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
-        // Check if a VERIFIED user already exists
-        const verifiedUser = await User.findOne({ email, isVerified: true });
-        if (verifiedUser) {
+        // Check if verified user exists
+        const existingUser = await User.findOne({ email, isVerified: true });
+        if (existingUser) {
             return res.status(400).json({ message: 'Email already registered' });
         }
 
-        // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        // Send Email FIRST. If this fails, the catch block triggers 
-        // and NOTHING is saved to the database.
-        await transporter.sendMail({
+        // THE FIX: Wrap the mail options carefully
+        const mailOptions = {
             from: `"BookWorm 🐛" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: "Verify your BookWorm Account",
-            html: `<h1>Your code is: ${otp}</h1>`
-        });
+            html: `
+                <div style="font-family: sans-serif; padding: 20px;">
+                    <h2>Welcome to BookWorm!</h2>
+                    <p>Your verification code is:</p>
+                    <h1 style="color: #4A90E2;">${otp}</h1>
+                    <p>This code expires in 10 minutes.</p>
+                </div>
+            `
+        };
 
-        // We send the OTP back to the Frontend. 
-        // The frontend will "hold" this code in memory.
+        // Try to send the email
+        await transporter.sendMail(mailOptions);
+
+        // SUCCESS: No database save yet!
         res.status(200).json({ 
+            success: true, 
             message: 'OTP sent!', 
             serverOtp: otp 
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to send email. Try again.' });
+        // CHECK YOUR TERMINAL FOR THIS LOG:
+        console.error("CRITICAL MAIL ERROR:", error);
+        
+        res.status(500).json({ 
+            message: 'Failed to send email.',
+            error: error.message // This helps you see the real error on the frontend
+        });
     }
 });
 
