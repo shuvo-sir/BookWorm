@@ -49,28 +49,30 @@ export const useAuthStore = create((set) => ({
     isLoading: false,
 
     register: async (username, email, password) => {
-        set({ isLoading: true });
-        try {
-            const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password })
-            });
+    set({ isLoading: true });
+    console.log("🚀 Request Started..."); // Check your debugger/console
+    try {
+        const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password }),
+            // Optional: add a timeout to the fetch itself
+            signal: AbortSignal.timeout(15000) 
+        });
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message);
+        const data = await response.json();
+        console.log("✅ Server Responded:", data);
 
-            set({ isLoading: false });
-            // Return the OTP to the component so it can be verified later
-            return { success: true, serverOtp: data.serverOtp }; 
-        } catch (error) {
-    set({ isLoading: false });
-    // This alert will tell you if it's "Failed to fetch" (Network) 
-    // or a real message from your backend
-    console.log("Full Error Object:", error);
-    return { success: false, error: error.message || "Network Error" };
-}
-    },
+        if (!response.ok) throw new Error(data.message || "Server Error");
+
+        set({ isLoading: false });
+        return { success: true, serverOtp: data.serverOtp }; 
+    } catch (error) {
+        console.log("❌ Error Caught:", error.message);
+        set({ isLoading: false });
+        return { success: false, error: error.message };
+    }
+},
 
     verifyOTP: async (username, email, password, userCode, serverOtp) => {
         set({ isLoading: true });

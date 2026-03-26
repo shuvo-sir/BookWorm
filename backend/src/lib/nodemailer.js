@@ -7,15 +7,15 @@ export const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
   port: 465,
-  secure: true, // Use SSL
+  secure: true,
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,   // 10 seconds
   auth: {
     user: process.env.EMAIL_USER,
-    // Automatically removes spaces from your 'daxv oxty zznc knah'
-    pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, "") : "",
+    pass: process.env.EMAIL_PASS.replace(/\s/g, ""), 
   },
   tls: {
-    // This allows the connection even if your network has strict security
-    rejectUnauthorized: false 
+    rejectUnauthorized: false // Helps bypass network blocks
   }
 });
 
