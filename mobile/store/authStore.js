@@ -48,25 +48,20 @@ export const useAuthStore = create((set) => ({
     token: null,
     isLoading: false,
 
-    register: async (username, email, password) => {
+   register: async (username, email, password) => {
     set({ isLoading: true });
-    console.log("🚀 Request Started to Render...");
+    console.log("🚀 Request Started (Waiting indefinitely)...");
     
     try {
-        // Create a controller to manually stop the request if it takes too long
-        const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 seconds
+        // REMOVE THE ABORT CONTROLLER/TIMEOUT FOR THIS TEST
         const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
-            signal: controller.signal
         });
 
-        clearTimeout(timeoutId); // Cancel the timeout if the request finishes
-
         const data = await response.json();
-        console.log("✅ Server Responded with:", data);
+        console.log("✅ FINALLY RESPONDED:", data);
 
         if (!response.ok) throw new Error(data.message || "Registration failed");
 
@@ -75,11 +70,7 @@ const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 seconds
         
     } catch (error) {
         set({ isLoading: false });
-        if (error.name === 'AbortError') {
-            console.log("❌ Error: Server took too long to wake up.");
-            return { success: false, error: "Server is waking up. Please try again in 10 seconds." };
-        }
-        console.log("❌ Connection Error:", error.message);
+        console.log("❌ Error:", error.message);
         return { success: false, error: error.message };
     }
 },
