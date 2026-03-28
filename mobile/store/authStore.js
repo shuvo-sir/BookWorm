@@ -74,14 +74,15 @@ export const useAuthStore = create((set) => ({
         return { success: false, error: error.message };
     }
 },
-    verifyOTP: async (username, email, password, userCode, serverOtp) => {
-        set({ isLoading: true });
-        try {
-            const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/verify-otp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password, userCode, serverOtp })
-            });
+    verifyOTP: async (email, userCode) => {
+    set({ isLoading: true });
+    try {
+        const response = await fetch("https://bookworm-33w3.onrender.com/api/auth/verify-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, userCode }) // Only send these two
+        });
+        // ... rest of your code
 
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);

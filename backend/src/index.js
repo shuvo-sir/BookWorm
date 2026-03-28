@@ -13,7 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-job.start();
+// index.js
+if (process.env.NODE_ENV === 'production') {
+  job.start(); 
+}
 // ADD THIS: This allows your app to read req.body
 app.use(express.json()); 
 app.use(cors()); // Enable CORS for all routes
