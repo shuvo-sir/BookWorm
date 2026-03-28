@@ -139,11 +139,16 @@ router.post('/register', async (req, res) => {
         await user.save();
 
        // Replace the old transporter line with this:
-        await sendEmail(
-            email, 
-            "Verify your BookWorm Account", 
-            `<h1>Welcome!</h1><p>Your verification code is: <strong>${otp}</strong></p>`
-        );
+      await sendEmail(
+        email, 
+        "Verify your BookWorm Account", 
+        `<h1>Welcome!</h1><p>Your verification code is: <strong>${otp}</strong></p>`
+    );
+
+    res.status(200).json({ 
+        success: true, 
+        message: 'OTP sent!' 
+    });
 
         res.status(200).json({ success: true, message: 'OTP sent!' }); // Don't send OTP in JSON!
     } catch (error) {
