@@ -3,27 +3,29 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Initialize Resend with your key
-const resend = new Resend("re_QGXY9mNZ_8nDD1WXt6G5ft1WvzUbTX5T3");
+// Ensure this is the key you got from your shuvohalder2002 account
+const resend = new Resend("re_VousJ9hN_9MYQ1axcj47bU41wQY6t3qWP");
 
 export const sendEmail = async (to, subject, htmlContent) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'BookWorm <onboarding@resend.dev>', // Keep this exactly as is for now
+      // ⚠️ DO NOT change this from address yet
+      from: 'BookWorm <onboarding@resend.dev>', 
       to: [to],
       subject: subject,
       html: htmlContent,
     });
 
     if (error) {
-      console.error("❌ Resend API Error:", error);
+      console.log("❌ Resend Error:", error.message);
       throw new Error(error.message);
     }
 
-    console.log("✅ Email Sent successfully via Resend:", data.id);
+    console.log("🚀 BOOM! Email sent successfully to:", to);
+    console.log("📬 Check your inbox at:", to);
     return data;
   } catch (err) {
-    console.error("❌ Fatal Email Error:", err.message);
+    console.error("❌ Backend Error:", err.message);
     throw err;
   }
 };
