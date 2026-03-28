@@ -111,7 +111,8 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import { transporter } from '../lib/nodemailer.js'; // Ensure this path is correct
+// Change this:
+import { sendEmail } from '../lib/nodemailer.js';
 
 const router = express.Router();
 
