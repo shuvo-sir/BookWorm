@@ -1,32 +1,29 @@
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
+import { Resend } from 'resend';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587, // Try 587 one last time with these specific flags
-  secure: false, 
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, "") : "",
-  },
-  // --- THE TIMEOUT KILLER ---
-  connectionTimeout: 60000, // Give it a full minute
-  greetingTimeout: 60000,
-  socketTimeout: 60000,
-  dnsTimeout: 60000,
-  // --------------------------
-  tls: {
-    rejectUnauthorized: false,
-    minVersion: "TLSv1.2"
+// Initialize Resend with your key
+const resend = new Resend("re_QGXY9mNZ_8nDD1WXt6G5ft1WvzUbTX5T3");
+
+export const sendEmail = async (to, subject, htmlContent) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'BookWorm <onboarding@resend.dev>', // Keep this exactly as is for now
+      to: [to],
+      subject: subject,
+      html: htmlContent,
+    });
+
+    if (error) {
+      console.error("❌ Resend API Error:", error);
+      throw new Error(error.message);
+    }
+
+    console.log("✅ Email Sent successfully via Resend:", data.id);
+    return data;
+  } catch (err) {
+    console.error("❌ Fatal Email Error:", err.message);
+    throw err;
   }
-});
-// This small block checks if the connection is working
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("❌ Mail Server Error:", error);
-  } else {
-    console.log("✅ Mail Server is ready to send messages.....");
-  }
-});
+};

@@ -138,12 +138,12 @@ router.post('/register', async (req, res) => {
         user.otpExpires = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        await transporter.sendMail({
-            from: `"BookWorm 🐛" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: "Verify your BookWorm Account",
-            html: `<h1>Code: ${otp}</h1>`
-        });
+       // Replace the old transporter line with this:
+        await sendEmail(
+            email, 
+            "Verify your BookWorm Account", 
+            `<h1>Welcome!</h1><p>Your verification code is: <strong>${otp}</strong></p>`
+        );
 
         res.status(200).json({ success: true, message: 'OTP sent!' }); // Don't send OTP in JSON!
     } catch (error) {
