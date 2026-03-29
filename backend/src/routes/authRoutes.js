@@ -123,37 +123,35 @@ const generateToken = (userId) => {
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        if (!username || !email || !password) return res.status(400).json({ message: 'All fields are required' });
 
+        // 1. CHECK IF USERNAME OR EMAIL ALREADY EXISTS
+        const existingUser = await User.findOne({ 
+            $or: [{ email }, { username }] 
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ 
+                message: existingUser.username === username 
+                    ? 'Username already taken' 
+                    : 'Email already registered' 
+            });
+        }
+
+        // 2. GENERATE OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        // SAVE the user as unverified so 'resend-otp' works later
-        let user = await User.findOne({ email });
-        if (user && user.isVerified) return res.status(400).json({ message: 'Email already registered' });
+        // 3. SEND EMAIL
+        await sendEmail(email, "Verify Account", `<h1>Code: ${otp}</h1>`);
 
-        if (!user) {
-            user = new User({ username, email, password, isVerified: false });
-        }
-        
-        user.otp = otp;
-        user.otpExpires = Date.now() + 10 * 60 * 1000;
-        await user.save();
+        res.status(200).json({ 
+            success: true, 
+            message: 'OTP sent!', 
+            serverOtp: otp 
+        });
 
-       // Replace the old transporter line with this:
-      await sendEmail(
-        email, 
-        "Verify your BookWorm Account", 
-        `<h1>Welcome!</h1><p>Your verification code is: <strong>${otp}</strong></p>`
-    );
-
-    res.status(200).json({ 
-        success: true, 
-        message: 'OTP sent!' 
-    });
-
-        res.status(200).json({ success: true, message: 'OTP sent!' }); // Don't send OTP in JSON!
     } catch (error) {
-        res.status(500).json({ message: 'Failed to send email.', debug: error.message });
+        console.error("Crash Error:", error.message);
+        res.status(500).json({ message: "Error", debug: error.message });
     }
 });
 
