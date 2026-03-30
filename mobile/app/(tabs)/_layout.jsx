@@ -9,8 +9,8 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
         headerShadowVisible: false,
-        inactiveTintColor: COLORS.inactive,
-        
+        inactiveTintColor: COLORS.black,
+
         tabBarStyle: {
             backgroundColor: COLORS.cardBackground,
             borderRadius: 30,
