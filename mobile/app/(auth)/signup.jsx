@@ -27,8 +27,7 @@ const signup = () => {
 
   // 2. Check the "success" flag we just added to the store
   if (result.success) {
-    // If it works, maybe navigate to home
-    router.replace("/index"); 
+    Alert.alert("Successfully Registered!");
   } else {
     // 🚀 This will now show your backend's "All fields are required" message!
     Alert.alert("Registration Failed", result.error);

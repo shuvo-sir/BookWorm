@@ -5,6 +5,8 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import COLORS from '../../constants/colors'
 import { Link } from "expo-router";
 import { Platform } from 'react-native'
+import { useAuthStore } from '../../store/authStore'
+import { Alert } from 'react-native'
 
 
 
@@ -13,9 +15,18 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { user, login, isLoading } = useAuthStore();
 
-  const handleLogin = () => {}
+
+
+  const handleLogin =async () => {
+    const result = await login(email, password);
+    if (!result.success) {
+      Alert.alert("Login Failed", result.error);
+    } else {
+      Alert.alert("Login Successful!");
+    }
+  }
 
 
   return (
@@ -82,9 +93,9 @@ const Login = () => {
           <TouchableOpacity
             style={styles.button}
             onPress={handleLogin}
-            disabled={loading}
+            disabled={isLoading}
           >
-            {loading ? (
+            {isLoading ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <Text style={styles.buttonText}>Login</Text>
