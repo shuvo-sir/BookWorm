@@ -11,6 +11,7 @@ export default function TabLayout() {
   const translateX = useRef(new Animated.Value(0)).current;
 
   return (
+    
     <Tabs 
       screenOptions={{ 
         headerShown: false,
