@@ -21,24 +21,24 @@ export default function RootLayout() {
     initialize();
   }, []);
 
-  useEffect(() => {
-    // 🛑 STOP if navigation isn't mounted or auth check isn't finished
-    if (!navigationState?.key || !isReady) return;
+  // useEffect(() => {
+  //   // 🛑 STOP if navigation isn't mounted or auth check isn't finished
+  //   if (!navigationState?.key || !isReady) return;
 
-    const isAuthScreen = segments[0] === "(auth)";
-    const isSignedIn = !!(user && token);
+  //   const isAuthScreen = segments[0] === "(auth)";
+  //   const isSignedIn = !!(user && token);
 
-    // ✅ Small delay to ensure the UI thread is clear
-    const timeout = setTimeout(() => {
-      if (!isSignedIn && !isAuthScreen) {
-        router.replace("/(auth)");
-      } else if (isSignedIn && isAuthScreen) {
-        router.replace("/(tabs)");
-      }
-    }, 1);
+  //   // ✅ Small delay to ensure the UI thread is clear
+  //   const timeout = setTimeout(() => {
+  //     if (!isSignedIn && !isAuthScreen) {
+  //       router.replace("/(auth)");
+  //     } else if (isSignedIn && isAuthScreen) {
+  //       router.replace("/(tabs)");
+  //     }
+  //   }, 1);
 
-    return () => clearTimeout(timeout);
-  }, [user, token, segments, navigationState?.key, isReady]);
+  //   return () => clearTimeout(timeout);
+  // }, [user, token, segments, navigationState?.key, isReady]);
 
   // While checking auth, show nothing or a splash screen to prevent flickers
   if (!isReady) return null;
