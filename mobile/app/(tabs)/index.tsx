@@ -5,7 +5,7 @@ import { Link } from 'expo-router'
 const Home = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#044f75' }}>
-      <Text>Book Review</Text>
+      <Text>Book a flight with us!</Text>
       <Link href="/(auth)/signup" style={{ marginTop: 20, padding: 10, backgroundColor: '#fff', borderRadius: 5 }}>
         Sign Up
       </Link>
